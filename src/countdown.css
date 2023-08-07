@@ -1,0 +1,16 @@
+.count-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 97vh;
+  width: 98%;
+  border: 1px solid #000;
+  background: #000;
+}
+
+.count-box h1 {
+  font-size: 35vw;
+  color: #fff;
+  margin: 0;
+}

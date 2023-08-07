@@ -30,6 +30,21 @@ const api = {
   Close: () => {
     ipcRenderer.send('close');
   },
+
+  SetTimer: (value: number) => {
+    console.log(value);
+    ipcRenderer.send('start-timer', value);
+  },
+  PauseTimer: () => {
+    console.log('pause');
+    ipcRenderer.send('pause-timer', '');
+  },
+  ResumeTimer: () => {
+    ipcRenderer.send('resume-timer');
+  },
+  StopTimer: () => {
+    ipcRenderer.send('stop-timer');
+  },
   /**
    * Provide an easier way to listen to events
    */

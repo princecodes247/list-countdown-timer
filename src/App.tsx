@@ -1,5 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import AppBar from './AppBar';
+import AppBar from './components/AppBar';
+import Drawer from './components/Drawer';
+import Navbar from '@/components/Navbar';
+import { ITimer } from './interfaces';
+import { Button } from './components/ui/button';
+import TimeInput from './components/TimeInput';
 
 function App() {
   console.log(window.ipcRenderer);
@@ -7,6 +12,23 @@ function App() {
   const [isOpen, setOpen] = useState(false);
   const [isSent, setSent] = useState(false);
   const [fromMain, setFromMain] = useState<string | null>(null);
+  const [timerList, setTimerList] = useState<ITimer[]>([
+    {
+      id: '1',
+      name: 'test',
+      time: 10
+    },
+    {
+      id: '2',
+      name: 'teqst',
+      time: 10
+    }
+  ]);
+  const [timer, setTimer] = useState<number>(0);
+
+  const [name, setName] = useState('');
+  const [minutes, setMinutes] = useState('');
+  const [seconds, setSeconds] = useState('');
 
   const handleToggle = () => {
     if (isOpen) {
@@ -17,21 +39,10 @@ function App() {
       setFromMain(null);
     }
   };
-  const sendMessageToElectron = () => {
-    if (window.Main) {
-      window.Main.sendMessage("Hello I'm from React World");
-    } else {
-      setFromMain('You are in a Browser, so no Electron functions are available');
-    }
-    setSent(true);
-  };
 
-  useEffect(() => {
-    if (isSent && window.Main)
-      window.Main.on('message', (message: string) => {
-        setFromMain(message);
-      });
-  }, [fromMain, isSent]);
+  const handleStartTimer = (time: number) => {
+    window.Main.SetTimer(time);
+  };
 
   return (
     <div className="flex flex-col h-screen">
@@ -40,39 +51,66 @@ function App() {
           <AppBar />
         </div>
       )}
-      <div className="flex-auto">
-        <div className=" flex flex-col justify-center items-center h-full bg-gray-800 space-y-4">
-          <h1 className="text-2xl text-gray-200">Vite + React + Typescript + Electron + Tailwind</h1>
-          <button
-            className="bg-yellow-400 py-2 px-4 rounded focus:outline-none shadow hover:bg-yellow-200"
-            onClick={handleToggle}
-          >
-            Click Me
-          </button>
-          {isOpen && (
-            <div className="flex flex-col space-y-4 items-center">
-              <div className="flex space-x-3">
-                <h1 className="text-xl text-gray-50">💝 Welcome 💝, now send a message to the Main 📩📩</h1>
-                <button
-                  onClick={sendMessageToElectron}
-                  className=" bg-green-400 rounded px-4 py-0 focus:outline-none hover:bg-green-300"
-                >
-                  Send
-                </button>
-              </div>
-              {isSent && (
-                <div>
-                  <h4 className=" text-green-500">Message sent!!</h4>
-                </div>
-              )}
-              {fromMain && (
-                <div>
-                  {' '}
-                  <h4 className=" text-yellow-200">{fromMain}</h4>
-                </div>
-              )}
+      <Navbar />
+      <div className="flex flex-auto">
+        <Drawer timerList={timerList} onClick={handleStartTimer} />
+        <div className="flex-[3]">
+          <div className="border">
+            <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
+            <TimeInput minutes={minutes} seconds={seconds} setMinutes={setMinutes} setSeconds={setSeconds} />
+            <Button
+              variant={'default'}
+              className=""
+              onClick={() => {
+                // window.Main.SetTimer(timer);
+                setTimerList([
+                  ...timerList,
+                  {
+                    id: timerList.length.toString(),
+                    name: name,
+                    time:
+                      parseInt(minutes.length > 0 ? minutes : '0') * 60 + parseInt(seconds.length > 0 ? seconds : '0')
+                  }
+                ]);
+                setName('');
+                setMinutes('');
+                setSeconds('');
+              }}
+            >
+              Add
+            </Button>
+            <Button
+              className="p-3 bg-blue-300"
+              onClick={() => {
+                let totalSeconds =
+                  parseInt(minutes.length > 0 ? minutes : '0') * 60 + parseInt(seconds.length > 0 ? seconds : '0');
+                window.Main.SetTimer(totalSeconds);
+              }}
+            >
+              Click
+            </Button>
+            jD
+          </div>
+          <div>
+            <p>Preview</p>
+
+            <div className="flex flex-row">
+              <Button
+                onClick={() => {
+                  window.Main.PauseTimer();
+                }}
+              >
+                Pause
+              </Button>
+              <Button
+                onClick={() => {
+                  window.Main.StopTimer();
+                }}
+              >
+                Stop
+              </Button>
             </div>
-          )}
+          </div>
         </div>
       </div>
     </div>

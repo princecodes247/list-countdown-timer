@@ -1,8 +1,9 @@
+// import { ITimer } from '../src/interfaces';
 // Native
 import { join } from 'path';
 
 // Packages
-import { BrowserWindow, app, ipcMain, IpcMainEvent } from 'electron';
+import { BrowserWindow, app, ipcMain, screen, IpcMainEvent } from 'electron';
 import isDev from 'electron-is-dev';
 
 const height = 600;
@@ -13,8 +14,10 @@ function createWindow() {
   const window = new BrowserWindow({
     width,
     height,
+    minWidth: width,
+    minHeight: height,
     //  change to false to use AppBar
-    frame: false,
+    frame: true,
     show: true,
     resizable: true,
     fullscreenable: true,
@@ -78,4 +81,82 @@ app.on('window-all-closed', () => {
 ipcMain.on('message', (event: IpcMainEvent, message: any) => {
   console.log(message);
   setTimeout(() => event.sender.send('message', 'hi from electron'), 500);
+});
+
+let countdownWindow: Electron.BrowserWindow | null = null;
+
+// Function to create the second window on the first secondary screen.
+function createSecondaryWindow() {
+  const secondaryDisplay = screen.getAllDisplays().find((display) => display.id !== screen.getPrimaryDisplay().id);
+
+  if (secondaryDisplay) {
+    console.log('in sec');
+    const { width, height } = secondaryDisplay.workAreaSize;
+    return new BrowserWindow({
+      width,
+      height,
+      frame: false,
+      show: true,
+      x: secondaryDisplay.bounds.x,
+      y: secondaryDisplay.bounds.y,
+      webPreferences: {
+        nodeIntegration: true,
+        devTools: true,
+        preload: join(__dirname, 'preload.js')
+      }
+    });
+  } else {
+    console.log('in sec');
+
+    return new BrowserWindow({
+      width: 800,
+      height: 600,
+      frame: false,
+      show: true,
+      webPreferences: {
+        nodeIntegration: true,
+        devTools: true,
+        preload: join(__dirname, 'preload.js')
+      }
+    });
+  }
+}
+
+ipcMain.on('pause-timer', (_, message: any) => {
+  console.log({ message });
+  countdownWindow?.webContents?.send('pause-countdown', '');
+  // event.sender.send('pause-countdown', '');
+});
+
+ipcMain.on('start-timer', (_, timerValue: number) => {
+  console.log({ timerValue });
+  if (countdownWindow) {
+    countdownWindow?.webContents?.send('start-countdown', timerValue);
+    // event.sender.send('start-countdown', timerValue);
+    return;
+    // countdownWindow.close();
+    // ipcMain.emit('start-timer', timerValue);
+  }
+  console.log({ timerValue });
+
+  countdownWindow = createSecondaryWindow();
+  if (countdownWindow) {
+    const port = process.env.PORT || 3000;
+    const url = isDev ? `http://localhost:${port}/countdown.html` : join(__dirname, '../src/out/countdown.html');
+    countdownWindow.loadURL(url);
+
+    // Start the countdown on the new window.
+    countdownWindow.webContents.on('did-finish-load', () => {
+      console.log({ webC: timerValue });
+      countdownWindow?.webContents.openDevTools();
+      countdownWindow?.webContents?.send('start-countdown', timerValue);
+    });
+
+    // Temporarily comment this to test on one screen
+    // countdownWindow.setFullScreen(true);
+
+    countdownWindow.on('closed', () => {
+      countdownWindow = null;
+    });
+  }
 });

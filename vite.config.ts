@@ -1,4 +1,5 @@
 import react from '@vitejs/plugin-react';
+import viteTsconfigPaths from 'vite-tsconfig-paths';
 import { UserConfig, ConfigEnv } from 'vite';
 import { join } from 'path';
 
@@ -9,11 +10,11 @@ export default ({ command }: ConfigEnv): UserConfig => {
   if (command === 'serve') {
     return {
       root: srcRoot,
-      base: '/',
-      plugins: [react()],
+      base: './',
+      plugins: [react(), viteTsconfigPaths()],
       resolve: {
         alias: {
-          '/@': srcRoot
+          '@/@': srcRoot
         }
       },
       build: {
@@ -33,10 +34,10 @@ export default ({ command }: ConfigEnv): UserConfig => {
   return {
     root: srcRoot,
     base: './',
-    plugins: [react()],
+    plugins: [react(), viteTsconfigPaths()],
     resolve: {
       alias: {
-        '/@': srcRoot
+        '@/': srcRoot
       }
     },
     build: {
