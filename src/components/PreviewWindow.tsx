@@ -93,9 +93,9 @@ export default function PreviewWindow({
   };
 
   return (
-    <div className="flex flex-col flex-1 p-6 border">
+    <div className="flex flex-col flex-1 p-6 bg-gray-100 border-t">
       <div className="flex items-center justify-center flex-1">
-        <h1 className="text-4xl">
+        <h1 className="text-6xl">
           {formatTimeToDisplay(convertTimeToSeconds(timeLeft.minutes.toString(), timeLeft.seconds.toString()))}
         </h1>
       </div>

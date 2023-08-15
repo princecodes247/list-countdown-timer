@@ -14,7 +14,7 @@ export default function Drawer({
   onRemove: (id: string) => void;
 }) {
   return (
-    <div className="flex-1 border">
+    <div className="flex-1 border-r">
       {timerList.length > 0 ? (
         <div className="flex flex-col gap-2 py-2">
           {React.Children.toArray(
