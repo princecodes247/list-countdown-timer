@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 
 import Icon from '../assets/icons/Icon-Electron.png';
+import Navbar from './Navbar';
 
 function AppBar() {
   const [isMaximize, setMaximize] = useState(false);
@@ -33,15 +34,7 @@ function AppBar() {
           </button>
         </div>
       </div>
-      <div className="text-white bg-gray-900 undraggable">
-        <div className="flex text-center">
-          <div className="w-8 text-sm hover:bg-gray-700">File</div>
-          <div className="w-8 text-sm hover:bg-gray-700">Edit</div>
-          <div className="w-10 text-sm hover:bg-gray-700">View</div>
-          <div className="text-sm w-14 hover:bg-gray-700 ">Window</div>
-          <div className="text-sm w-9 hover:bg-gray-700 ">Help</div>
-        </div>
-      </div>
+      <Navbar />
     </>
   );
 }

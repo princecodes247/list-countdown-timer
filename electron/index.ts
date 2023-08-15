@@ -17,7 +17,7 @@ function createWindow() {
     minWidth: width,
     minHeight: height,
     //  change to false to use AppBar
-    frame: true,
+    frame: false,
     show: true,
     resizable: true,
     fullscreenable: true,
@@ -37,7 +37,7 @@ function createWindow() {
     window?.loadFile(url);
   }
   // Open the DevTools.
-  window.webContents.openDevTools();
+  // window.webContents.openDevTools();
 
   // For AppBar
   ipcMain.on('minimize', () => {
@@ -155,7 +155,10 @@ ipcMain.on('start-timer', (_, timerValue: number) => {
     // Start the countdown on the new window.
     countdownWindow.webContents.on('did-finish-load', () => {
       console.log({ webC: timerValue });
-      countdownWindow?.webContents.openDevTools();
+
+      // Open dev tools for debugging
+      // countdownWindow?.webContents.openDevTools();
+
       countdownWindow?.webContents?.send('start-countdown', timerValue);
     });
 

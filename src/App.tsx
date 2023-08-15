@@ -52,7 +52,7 @@ function App() {
           <AppBar />
         </div>
       )}
-      <Navbar />
+
       <div className="flex flex-auto">
         <Drawer timerList={timerList} onRemove={handleRemoveTimer} onClick={handleStartTimer} />
         <div className="flex-[3] flex flex-col">
