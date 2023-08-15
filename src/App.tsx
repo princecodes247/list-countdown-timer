@@ -17,18 +17,7 @@ function App() {
   // const [countdownMeta, setCountdownMeta] = useState()
   const [isSent, setSent] = useState(false);
   const [fromMain, setFromMain] = useState<string | null>(null);
-  const [timerList, setTimerList] = useState<ITimer[]>([
-    {
-      id: '1',
-      name: 'test',
-      time: 10
-    },
-    {
-      id: '2',
-      name: 'teqst',
-      time: 10
-    }
-  ]);
+  const [timerList, setTimerList] = useState<ITimer[]>([]);
 
   // const [timeLeft, setTimeLeft] = useState<number>(0);
 
@@ -52,6 +41,10 @@ function App() {
     setTimeLeft(calculateTimeLeft(calculateTargetDate(time)));
   };
 
+  const handleRemoveTimer = (id: string) => {
+    setTimerList(timerList.filter((timer) => timer.id !== id));
+  };
+
   return (
     <div className="flex flex-col h-screen">
       {window.Main && (
@@ -61,31 +54,37 @@ function App() {
       )}
       <Navbar />
       <div className="flex flex-auto">
-        <Drawer timerList={timerList} onClick={handleStartTimer} />
+        <Drawer timerList={timerList} onRemove={handleRemoveTimer} onClick={handleStartTimer} />
         <div className="flex-[3] flex flex-col">
-          <div className="border">
-            <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              setTimerList([
+                ...timerList,
+                {
+                  id: timerList.length.toString(),
+                  name: name,
+                  time: convertTimeToSeconds(minutes, seconds)
+                }
+              ]);
+              setName('');
+              setMinutes('');
+              setSeconds('');
+            }}
+            className="p-4"
+          >
+            <input
+              type="text"
+              className="w-full p-4 py-2 mb-2 border"
+              placeholder="Enter Timer name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
             <TimeInput minutes={minutes} seconds={seconds} setMinutes={setMinutes} setSeconds={setSeconds} />
-            <Button
-              variant={'default'}
-              className=""
-              onClick={() => {
-                setTimerList([
-                  ...timerList,
-                  {
-                    id: timerList.length.toString(),
-                    name: name,
-                    time: convertTimeToSeconds(minutes, seconds)
-                  }
-                ]);
-                setName('');
-                setMinutes('');
-                setSeconds('');
-              }}
-            >
+            <Button variant={'default'} className="mt-4">
               Add
             </Button>
-          </div>
+          </form>
           {/* <p>{timeLeft.seconds}</p> */}
           <PreviewWindow
             setTargetDate={setTargetDate}

@@ -24,13 +24,17 @@ export default function TimeInput({
     const value = event.target.value as string;
     // if
     // }
-    const mins = parseInt(value.trim().length > 0 ? value : '0');
-
+    const mins = parseInt(value.trim().length > 0 ? value : '');
+    console.log({ mins });
+    setMinutes(
+      isNaN(mins) ? '' : mins < 60 ? mins.toString() : mins / 10 > 10 ? Math.floor(mins / 10).toString() : '60'
+    );
     if (mins > 60) {
+      setSeconds(mins % 10 === 0 ? '' : (mins % 10).toString());
       secondsInputRef.current?.focus();
       return;
     }
-    setMinutes(mins.toString());
+    // setMinutes(mins.toString());
     if (value.length === 3) {
       if (parseInt(seconds) < 1) setSeconds('');
       secondsInputRef.current?.focus();
@@ -50,11 +54,11 @@ export default function TimeInput({
     }
   };
   return (
-    <div className="flex">
+    <div className="flex items-center gap-2">
       <input
         ref={minsInputRef}
         type="text"
-        className="p-4 border aspect-[1/1] max-w-[70px] text-center"
+        className="p-3 border aspect-[1/1] max-w-[50px] text-center"
         value={minutes}
         onChange={handleInput1Change}
         maxLength={3}
@@ -62,15 +66,15 @@ export default function TimeInput({
       />
       <span>:</span>
       <input
-        className="p-4 border aspect-[1/1] max-w-[70px] text-center"
+        className="p-3 border aspect-[1/1] max-w-[50px] text-center"
         ref={secondsInputRef}
         placeholder="00"
         value={seconds}
         onKeyDown={(e) => {
           if (e.key === 'Enter') {
             // window.Main?.SetTimer(parseInt(minutes) * 60 + parseInt(seconds));
-            setMinutes('00');
-            setSeconds('00');
+            // setMinutes('00');
+            // setSeconds('00');
           }
           if (e.key === 'Backspace') {
             if (seconds === '0') {
