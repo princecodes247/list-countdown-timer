@@ -22,7 +22,8 @@ function createWindow() {
     resizable: true,
     fullscreenable: true,
     webPreferences: {
-      preload: join(__dirname, 'preload.js')
+      preload: join(__dirname, 'preload.js'),
+      devTools: true
     }
   });
 
@@ -36,7 +37,7 @@ function createWindow() {
     window?.loadFile(url);
   }
   // Open the DevTools.
-  // window.webContents.openDevTools();
+  window.webContents.openDevTools();
 
   // For AppBar
   ipcMain.on('minimize', () => {
@@ -125,6 +126,12 @@ function createSecondaryWindow() {
 ipcMain.on('pause-timer', (_, message: any) => {
   console.log({ message });
   countdownWindow?.webContents?.send('pause-countdown', '');
+  // event.sender.send('pause-countdown', '');
+});
+
+ipcMain.on('stop-timer', (_, message: any) => {
+  console.log({ message });
+  countdownWindow?.webContents?.send('stop-countdown', '');
   // event.sender.send('pause-countdown', '');
 });
 
