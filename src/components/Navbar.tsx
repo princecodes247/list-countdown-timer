@@ -13,16 +13,16 @@ export default function Navbar() {
   return (
     <Menubar>
       <MenubarMenu>
-        <MenubarTrigger>File</MenubarTrigger>
+        <MenubarTrigger className="cursor-pointer">Options</MenubarTrigger>
         <MenubarContent>
-          <MenubarItem>
+          {/* <MenubarItem>
             New Tab <MenubarShortcut>⌘T</MenubarShortcut>
-          </MenubarItem>
-          <MenubarItem>New Window</MenubarItem>
+          </MenubarItem> */}
+          <MenubarItem>Open Countdown Window</MenubarItem>
+          {/* <MenubarSeparator /> */}
+          {/* <MenubarItem>Share</MenubarItem>
           <MenubarSeparator />
-          <MenubarItem>Share</MenubarItem>
-          <MenubarSeparator />
-          <MenubarItem>Print</MenubarItem>
+          <MenubarItem>Print</MenubarItem> */}
         </MenubarContent>
       </MenubarMenu>
     </Menubar>
